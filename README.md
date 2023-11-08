@@ -34,8 +34,7 @@ Naturally, it serializes back to its original form.
 
 Of course, you can also use `dynamic.T[..]` types nested inside other `dynamic.T[..]` types.
 
-If a field is mapped statically, you cannot make changes to its dynamic part and then serialize it back,
-such changes are lost. Only make modifications to the static part if a field exists statically.
+Don't put the same field in both static and dynamic. It makes for a bad day when it comes to consistency.
 
 kthx, bye
 

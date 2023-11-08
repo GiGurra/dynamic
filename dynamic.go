@@ -6,8 +6,8 @@ import (
 )
 
 type T[S any] struct {
-	S S              `json:",squash"`
-	X map[string]any `json:",remain,squash"`
+	S S
+	X map[string]any
 }
 
 func NewT[V any](static V, extra map[string]any) T[V] {
@@ -55,18 +55,37 @@ func (t T[S]) MarshalJSON() ([]byte, error) {
 
 func (t *T[S]) UnmarshalJSON(data []byte) error {
 
-	var resultMap map[string]any
-	err := json.Unmarshal(data, &resultMap)
+	err := json.Unmarshal(data, &t.X)
 	if err != nil {
 		return err
 	}
 
-	err = mapstructure.Decode(resultMap, &t.S)
+	meta := mapstructure.Metadata{}
+	config := &mapstructure.DecoderConfig{
+		Metadata: &meta,
+		Result:   &t.S,
+	}
+
+	decoder, err := mapstructure.NewDecoder(config)
 	if err != nil {
 		return err
 	}
 
-	t.X = resultMap
+	err = decoder.Decode(t.X)
+	if err != nil {
+		return err
+	}
+
+	// lastly remove duplicates
+	allowedExtraKeys := map[string]bool{}
+	for _, key := range meta.Unused {
+		allowedExtraKeys[key] = true
+	}
+	for key := range t.X {
+		if !allowedExtraKeys[key] {
+			delete(t.X, key)
+		}
+	}
 
 	return nil
 }

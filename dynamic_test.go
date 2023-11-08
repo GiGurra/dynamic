@@ -14,7 +14,8 @@ type Root struct {
 }
 
 type Header struct {
-	OperationID string `json:"operationId"`
+	OperationID string  `json:"operationId"`
+	Optional    *string `json:"optional,omitempty"`
 }
 
 type ManagedZone struct {
@@ -38,6 +39,57 @@ func Test_header2Json(t *testing.T) {
 	if string(jsBytes) != expJson {
 		t.Fatalf("expected json to be %s but got %s", expJson, jsBytes)
 	}
+}
+
+func Test_deDuplication(t *testing.T) {
+	hdr := NewT(
+		Header{
+			OperationID: "operation-yayayaya",
+		},
+		map[string]any{
+			"hello":    "world",
+			"optional": "hello!",
+		},
+	)
+
+	jsBytes, err := json.Marshal(hdr)
+	if err != nil {
+		t.Fatalf("error marshalling json: %v", err)
+	}
+
+	fmt.Printf("jsBytes: %s\n", jsBytes)
+
+	var hdrBack T[Header]
+	err = json.Unmarshal(jsBytes, &hdrBack)
+	if err != nil {
+		t.Fatalf("error unmarshalling json: %v", err)
+	}
+
+	if hdrBack.S.Optional == nil {
+		t.Fatalf("expected Optional to be set")
+	}
+
+	if *hdrBack.S.Optional != "hello!" {
+		t.Fatalf("expected Optional to be hello! but got %s", *hdrBack.S.Optional)
+	}
+
+	expHdr2 := NewT(
+		Header{
+			OperationID: "operation-yayayaya",
+			Optional:    ptr("hello!"),
+		},
+		map[string]any{
+			"hello": "world",
+		},
+	)
+
+	if diff := cmp.Diff(hdrBack, expHdr2); diff != "" {
+		t.Fatalf("mismatch (-want +got):\n%s", diff)
+	}
+}
+
+func ptr[T any](t T) *T {
+	return &t
 }
 
 func TestT_toFromJson(t *testing.T) {
