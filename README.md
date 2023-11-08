@@ -25,7 +25,7 @@ err := json.Unmarshall(bytes, &result)
 
 And you're done!
 
-Now you have access to the static fields the way you do normally (struct embedding), but will also preserve any extra fields when serializing back to Json.
+Now you have access to the static fields by `.Static` and `.Extra`.
 
 Of course, you can also use `dynamic.T[..]` types nested inside other `dynamic.T[..]` types.
 
