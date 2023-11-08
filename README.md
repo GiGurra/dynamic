@@ -5,7 +5,7 @@ Dual view of types, static and dynamic, in go
 Tired of:
 
 * having to juggle between nested `map[string]any` and your own incomplete types?
-* keep your static types up to date with source implementation in an API you are consuming?
+* keeping your static types up to date with source implementation in an API you are consuming?
 
 You probably don't have to.
 
