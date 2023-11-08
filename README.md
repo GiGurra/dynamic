@@ -29,7 +29,7 @@ err := json.Unmarshall(bytes, &result)
 
 And you're done!
 
-Now you have access to fields by `.S` (statically) and by `.X` (dynamically).
+Now you have access to fields by `.S` (statically) and by `.X` (dynamically) to any yet unmapped fields.
 Naturally, it serializes back to its original form.
 
 Of course, you can also use `dynamic.T[..]` types nested inside other `dynamic.T[..]` types.
