@@ -39,6 +39,19 @@ Of course, you can also use `dynamic.T[..]` types nested inside other `dynamic.T
 
 Don't put the same field in both static and dynamic. It makes for a bad day when it comes to consistency.
 
+## Why?
+
+In my case I want to write GCP configuration backup tools that download all the inventory metadata and configuration, and push them to git as my backup place :). 
+IAC is nice, but will probably rarely be 100%, so I use this as a complement.
+
+In short, I use this to always get all the data when backing up:
+* dns config
+* load balancer config
+* iap config
+* job config
+* service config
+* etc
+
 ## Examples
 
 Copy-pasta from test code
